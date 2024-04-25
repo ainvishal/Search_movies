@@ -14,6 +14,7 @@ router.post('/favorite', async (req,res) => {
     if(isFound) {
         res.send("data is already present");
     }
+    console.log(req.body);
 
     const response = await Prisma.favorites.create({
         data: {

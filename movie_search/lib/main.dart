@@ -99,15 +99,19 @@ class _MyScreenWidgetState extends State<MyScreenWidget> {
   }
 
   Future<void> addToCart(Model filterList) async {
-    const url = 'http://192.168.29.233/api/v1/favorite';
-    final body = jsonEncode({
+    const url = 'http://192.168.29.233:3000/api/v1/favorite';
+    Map<String, dynamic> data = {
       'title': filterList.title,
-      'rating': filterList.rating,
+      'rating': filterList.rating.toString(),
       'imageurl': filterList.imageUrl
-    });
+    };
+    String body = json.encode(data);
 
     final response = await http.post(
       Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: body,
     );
     print(response);

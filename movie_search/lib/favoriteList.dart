@@ -23,13 +23,21 @@ class _FavoriteListState extends State<FavoriteList> {
 
   Future<void> fetchMovies() async {
     try {
-      final moviesResponse =
-          await http.get(Uri.parse("http://localhost:3000/api/v1/favorite"));
+      final moviesResponse = await http
+          .get(Uri.parse("http://192.168.29.233:3000/api/v1/favorite"));
       print(moviesResponse);
       if (moviesResponse.statusCode == 200) {
         setState(() {
           Map<String, dynamic> movieList = json.decode(moviesResponse.body);
-          list = movieList['movies'];
+          if (movieList.containsKey('movie') && movieList['movie'] != null) {
+            if (movieList['movie'] is List) {
+              list = movieList['movie'];
+            } else {
+              print('Value associated with "movie" key is not a list.');
+            }
+          } else {
+            print('"movie" key does not exist or its value is null.');
+          }
         });
       }
     } catch (e) {
@@ -46,6 +54,7 @@ class _FavoriteListState extends State<FavoriteList> {
         child: ListView.builder(
           itemCount: list.length,
           itemBuilder: (context, index) {
+            Map<String, dynamic> movie = list[index];
             return Container(
               height: 120,
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -56,7 +65,7 @@ class _FavoriteListState extends State<FavoriteList> {
                   Flexible(
                     flex: 2,
                     child: Image.network(
-                      "https://image.tmdb.org/t/p/w500/${list[index].imageUrl}",
+                      "https://image.tmdb.org/t/p/w500/${movie['imageurl']}",
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -68,12 +77,12 @@ class _FavoriteListState extends State<FavoriteList> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              list[index].title,
+                              movie['title'],
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              list[index].rating.toString(),
+                              movie['rating'],
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
                             )

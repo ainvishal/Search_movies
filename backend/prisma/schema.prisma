@@ -17,6 +17,6 @@ datasource db {
 model Favorites {
   id Int @id @default(autoincrement())
   title String
-  rating Decimal
+  rating String
   imageurl String
 }
